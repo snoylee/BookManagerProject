@@ -1,0 +1,203 @@
+package com.dbs.book.ui.activity;
+import java.util.List;
+
+import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.alibaba.fastjson.JSON;
+import com.dbs.book.R;
+import com.dbs.book.app.ProjectApp;
+import com.dbs.book.net.ApiClient;
+import com.dbs.book.ui.model.BookInfo;
+import com.dbs.book.ui.model.ContentsInfo;
+import com.duowan.mobile.netroid.image.NetworkImageView;
+import com.loopj.android.http.RequestParams;
+@SuppressLint("ResourceAsColor")
+public class BookDetailActivity extends BaseActivity implements OnClickListener {
+	public static final String TAG = "BookDetailActivity";
+	public static final String BOOKINFO = "bookInfo";
+	
+	private NetworkImageView bookDetailImage;
+	private TextView bookDeatilName;;
+	private TextView bookDetailType;
+	private TextView bookDetailrCount;
+	private TextView bookDetailrSummary;
+	
+	//数据目录
+	private TextView bookDetailZhangOne,bookDetailZhangTwo,bookDetailZhangThree;
+	private TextView bookDetailZhangFour,bookDetailZhangFive;
+	
+   //查看全部  、 开始阅读 、 加入书架、  下载
+	private TextView bookMuluLookAll,bookDetailStartRead,bookDetailDownload,bookDetailAddShujia;
+	
+	private List<ContentsInfo> contents ;
+	
+	private Handler mBookDetailHandler = new Handler(new Handler.Callback() {
+		@Override
+		public boolean handleMessage(Message msg) {
+			if (null == this || null==BookDetailActivity.this || BookDetailActivity.this.isFinishing())
+				return true;
+			switch (msg.what) {
+				case ApiClient.DATA_OK:
+					onSuccess(msg.obj.toString());
+					break;
+				case ApiClient.DATA_ERR:
+				case ApiClient.SER_ERR:
+					Toast.makeText(BookDetailActivity.this, msg.obj.toString(), 0).show();
+					break;
+			}
+			return true;
+		}
+	});
+	private void onSuccess(String string) {
+		Log.d(TAG,"contents = "+string) ;
+		contents = JSON.parseArray(string, ContentsInfo.class);
+		if(null != contents){
+			switch (contents.size()) {
+			case 0:
+					bookDetailZhangOne.setText("第一章：搭建环境");
+					bookDetailZhangTwo.setText("第二章：activity");
+					bookDetailZhangThree.setText("第三章： service");
+					bookDetailZhangFour.setText("第四章： broadCastReceiver");
+					bookDetailZhangFive.setText("第五章：contentProvider");
+				break;
+			case 1:
+				bookDetailZhangOne.setText(contents.get(0).getName());
+				break;
+			case 2:
+				bookDetailZhangOne.setText(contents.get(0).getName());
+				bookDetailZhangTwo.setText(contents.get(1).getName());
+				break;
+			case 3:
+				bookDetailZhangOne.setText(contents.get(0).getName());
+				bookDetailZhangTwo.setText(contents.get(1).getName());
+				bookDetailZhangThree.setText(contents.get(2).getName());
+				break;
+			case 4:
+				bookDetailZhangOne.setText(contents.get(0).getName());
+				bookDetailZhangTwo.setText(contents.get(1).getName());
+				bookDetailZhangThree.setText(contents.get(2).getName());
+				bookDetailZhangFour.setText(contents.get(3).getName());
+				break;
+			case 5:
+				bookDetailZhangOne.setText(contents.get(0).getName());
+				bookDetailZhangTwo.setText(contents.get(1).getName());
+				bookDetailZhangThree.setText(contents.get(2).getName());
+				bookDetailZhangFour.setText(contents.get(3).getName());
+				bookDetailZhangFive.setText(contents.get(4).getName());
+				break;
+			default:
+				break;
+			}
+		}else{
+			bookDetailZhangOne.setText("第一章：搭建环境");
+			bookDetailZhangTwo.setText("第二章：activity");
+			bookDetailZhangThree.setText("第三章： service");
+			bookDetailZhangFour.setText("第四章： broadCastReceiver");
+			bookDetailZhangFive.setText("第五章：contentProvider");
+		}
+	}
+	@Override
+	protected int provideLayoutResId() {
+		return R.layout.book_detail_layout;
+	}
+	@Override
+	protected void initView(Bundle savedInstanceState) {
+		bookDeatilName = (TextView) this.findViewById(R.id.book_detail_name);
+		bookDetailImage = (NetworkImageView) this.findViewById(R.id.book_detail_Image);
+		bookDetailType = (TextView) this.findViewById(R.id.book_detail_type);
+		bookDetailrCount = (TextView) this.findViewById(R.id.book_detail_readed_person_count);
+		bookDetailrSummary = (TextView) this.findViewById(R.id.book_detail_summary);
+		
+		//数据目录
+		bookDetailZhangOne = (TextView) this.findViewById(R.id.book_detail_zhang_1);
+		bookDetailZhangTwo = (TextView) this.findViewById(R.id.book_detail_zhang_2);
+		bookDetailZhangThree = (TextView) this.findViewById(R.id.book_detail_zhang_3);
+		bookDetailZhangFour = (TextView) this.findViewById(R.id.book_detail_zhang_4);
+		bookDetailZhangFive = (TextView) this.findViewById(R.id.book_detail_zhang_5);
+		
+		//底部按钮
+		bookMuluLookAll = (TextView) this.findViewById(R.id.book_mulu_look_all);
+		bookDetailStartRead = (TextView) this.findViewById(R.id.book_detail_start_read);
+		bookDetailAddShujia = (TextView) this.findViewById(R.id.book_detail_add_shujia);
+		bookDetailDownload = (TextView) this.findViewById(R.id.book_detail_download);
+	}
+	@Override
+	protected void initListener() {
+		bookMuluLookAll.setOnClickListener(this);
+		bookDetailStartRead.setOnClickListener(this);
+		bookDetailAddShujia.setOnClickListener(this);
+		bookDetailDownload.setOnClickListener(this);
+	}
+	
+	
+	//textView 按下时
+//	imageButton.setOnTouchListener(new OnTouchListener(){     
+//        @Override    
+//        public boolean onTouch(View v, MotionEvent event) {     
+//                if(event.getAction() == MotionEvent.ACTION_DOWN){     
+//                        //更改为按下时的背景图片     
+//                        v.setBackgroundResource(R.drawable.pressed);     
+//                }else if(event.getAction() == MotionEvent.ACTION_UP){     
+//                        //改为抬起时的图片     
+//                        v.setBackgroundResource(R.drawable.released);     
+//                }     
+//                return false;     
+//        }     
+//});  
+	@Override
+	public void onClick(View view) {
+		switch (view.getId()) {
+		case R.id.book_mulu_look_all:
+			
+			break;
+		case R.id.book_detail_start_read:
+			 bookDetailStartRead.setTextColor(R.color.white_color);
+			 Toast.makeText(BookDetailActivity.this, "white id click!", 0).show();
+			break;
+		case R.id.book_detail_add_shujia:
+			bookDetailAddShujia.setTextColor(R.color.white_color);
+			break;
+		case R.id.book_detail_download:
+			bookDetailDownload.setTextColor(R.color.white_color);
+			break;
+		default:
+			break;
+		}
+	}
+	@Override
+	protected void initData(Bundle savedInstanceState) {
+		 Intent intent  = getIntent();
+		 BookInfo bookInfo = (BookInfo) intent.getSerializableExtra(BOOKINFO);
+		 contents = bookInfo.getContents();
+		 
+		 mTitleBar.setTitle(bookInfo.getName());
+		 bookDetailImage.setImageUrl(bookInfo.getCoverUrl(), ProjectApp.mImageLoader);
+		 bookDeatilName.setText(bookInfo.getName());
+		 bookDetailType.setText(bookInfo.getType());
+		 bookDetailrCount.setText("已有"+bookInfo.getCount()+"人阅读");
+		 bookDetailrSummary.setText(bookInfo.getSummary());
+		 
+		 Log.d(TAG, bookInfo.getName());
+		 Log.d(TAG, bookInfo.getSummary());
+		 
+		 RequestParams params = new RequestParams();
+		 params.add("limit","5");
+		 params.add("bookId",bookInfo.getId());
+		 ApiClient.getContentsByBookId(params,mBookDetailHandler);
+	}
+	@Override
+	public void onLeftClicked() {
+		super.onLeftClicked();
+		finish();
+	}
+
+}

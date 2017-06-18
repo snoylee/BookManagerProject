@@ -1,0 +1,102 @@
+package com.dbs.book.ui.fragment;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.Toast;
+
+import com.alibaba.fastjson.JSON;
+import com.dbs.book.R;
+import com.dbs.book.net.ApiClient;
+import com.dbs.book.ui.adapter.MainListAdapter;
+import com.dbs.book.ui.adapter.MainViewPagerAdapter;
+import com.dbs.book.ui.model.IndexInfo;
+import com.dbs.book.ui.view.normal.XViewPageSet;
+
+public class MainFragment extends Fragment {
+	private View mRootView;
+	private ListView mListView;
+	private XViewPageSet mViewPager;
+	private MainListAdapter adapter;
+	private List<IndexInfo> data = new ArrayList<IndexInfo>();
+	
+	private Handler getIndexInfoHandler = new Handler(new Handler.Callback() {
+		@Override
+		public boolean handleMessage(Message msg) {
+
+			if (null == this || null==getActivity() || getActivity().isFinishing())
+				return true;
+
+			switch (msg.what) {
+				case ApiClient.DATA_OK:
+					onSuccess(msg.obj.toString());
+					break;
+				case ApiClient.DATA_ERR:
+				case ApiClient.SER_ERR:
+					Toast.makeText(getActivity(), msg.obj.toString(), 0).show();
+					break;
+			}
+			return true;
+
+		}
+	});
+	
+	
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		mRootView = inflater.inflate(R.layout.fragment_main, null);
+		initView();
+		return mRootView;
+	}
+
+	protected void onSuccess(String string) {
+		Log.e("index_info", string);
+		data = JSON.parseArray(string, IndexInfo.class);
+		adapter = new MainListAdapter(getActivity(), data);
+		mListView.setAdapter(adapter);
+	}
+
+	private void initView() {
+		ApiClient.getIndexInfo(getIndexInfoHandler);
+		
+		mListView = (ListView) mRootView.findViewById(R.id.main_list);
+		
+		mViewPager = new XViewPageSet(getActivity());
+		ArrayList<View> mListViews = new ArrayList<View>();
+	    ArrayList<Drawable> drawables = new ArrayList<Drawable>();
+	    mListViews.add(new ImageView(getActivity()));
+	    mListViews.add(new ImageView(getActivity()));
+	    mListViews.add(new ImageView(getActivity()));
+	    mListViews.add(new ImageView(getActivity()));
+	    
+	    drawables.add(getResources().getDrawable(R.drawable.aaa));
+	    drawables.add(getResources().getDrawable(R.drawable.bbb));
+	    drawables.add(getResources().getDrawable(R.drawable.ccc));
+	    drawables.add(getResources().getDrawable(R.drawable.ddd));
+	    
+		MainViewPagerAdapter viewPagerAdapter = new MainViewPagerAdapter(getActivity(), mListViews, drawables);
+		mViewPager.setPageCount(4);
+		mViewPager.setAdapter(viewPagerAdapter);
+		mViewPager.setStartAutoRun(3000);
+		mListView.addHeaderView(mViewPager);
+		
+		adapter = new MainListAdapter(getActivity(), data);
+		mListView.setAdapter(adapter);
+		
+	}
+	
+	
+	
+}

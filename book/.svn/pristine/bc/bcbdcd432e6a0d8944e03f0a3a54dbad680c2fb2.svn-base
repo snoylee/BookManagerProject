@@ -1,0 +1,74 @@
+package com.dbs.book.ui.adapter;
+
+import java.util.List;
+
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.TextView;
+
+import com.dbs.book.R;
+import com.dbs.book.app.ProjectApp;
+import com.dbs.book.ui.model.BookInfo;
+import com.duowan.mobile.netroid.image.NetworkImageView;
+
+public class BookListAdapter extends BaseAdapter {
+
+	private List<BookInfo> data;
+	private Context mContext;
+	private LayoutInflater mInflater;
+	
+	public BookListAdapter(Context context, List<BookInfo> data){
+		this.mContext = context;
+		this.mInflater = LayoutInflater.from(context);
+		this.data = data;
+	}
+	
+	@Override
+	public int getCount() {
+		return data == null ? 0: data.size();
+	}
+
+	@Override
+	public Object getItem(int position) {
+		return data.get(position);
+	}
+
+	@Override
+	public long getItemId(int position) {
+		return position;
+	}
+
+	@Override
+	public View getView(int position, View v, ViewGroup parent) {
+		Holder holder = null;
+		if(v == null){
+			v = mInflater.inflate(R.layout.shelf_book_list_item, null);
+			holder = new Holder();
+			holder.cover = (NetworkImageView) v.findViewById(R.id.shelf_list_face_iv);
+			holder.name = (TextView) v.findViewById(R.id.shelf_list_name_tv);
+			holder.type = (TextView) v.findViewById(R.id.shelf_list_sort_tv);
+			holder.summary = (TextView) v.findViewById(R.id.shelf_list_intro_tv);
+			holder.isLoacl = (TextView) v.findViewById(R.id.shelf_list_local_tv);
+		}else{
+			holder = (Holder) v.getTag();
+		}
+		BookInfo book = data.get(position);
+		holder.cover.setImageUrl(book.getCoverUrl(), ProjectApp.mImageLoader);
+		holder.name.setText(book.getName());
+		holder.type.setText(book.getType());
+		holder.summary.setText(book.getSummary());
+		
+		return v;
+	}
+
+	class Holder{
+		private NetworkImageView cover;
+		private TextView name;
+		private TextView type;
+		private TextView summary;
+		private TextView isLoacl;
+	}
+}

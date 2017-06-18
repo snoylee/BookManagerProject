@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+    <com.dbs.book.ui.view.titlebar.TitleBar
+        style="@style/titlebarstyle"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        app:action="书架"
+        app:title="搜索" />
+    
+   <LinearLayout 
+       android:layout_width="fill_parent"
+       android:layout_height="wrap_content"
+       android:orientation="horizontal"
+       >
+        <com.dbs.book.ui.view.normal.ClearEditText
+        android:id="@+id/search_editext"
+        android:layout_width="0dip"
+        android:layout_weight="1"
+        android:layout_height="@dimen/height_8_80"
+        android:layout_marginBottom="@dimen/height_2_80"
+        android:layout_marginLeft="@dimen/height_2_80"
+        android:paddingLeft="@dimen/width_2_80"
+        android:paddingRight="@dimen/width_2_80"
+        android:layout_marginRight="@dimen/height_2_80"
+        android:layout_marginTop="@dimen/height_2_80"
+        android:background="@drawable/shape_showmore_bg"
+        android:drawableLeft="@drawable/search_icon_normal"
+        android:imeOptions="actionSearch"
+        android:hint="请输入您要搜索的书名"
+        android:singleLine="true"
+        android:textColor="#999999"
+        android:textSize="@dimen/text_size_15" />
+        
+        <TextView android:id="@+id/search_cancle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="搜索"
+            android:paddingRight="@dimen/width_2_80"
+            android:textColor="@color/main_color"
+            android:textSize="@dimen/text_size_18"/>
+   </LinearLayout>
+   
+   <View style="@style/divide_line" />
+   
+   <com.dbs.book.ui.view.normal.NoScrollListView
+       android:id="@+id/serch_history_list"
+       android:layout_width="fill_parent"
+       android:layout_height="fill_parent"
+       android:layout_marginLeft="@dimen/width_2_80"
+       android:layout_marginRight="@dimen/width_2_80"
+       android:visibility="gone"
+       android:divider="@null"
+       />
+   
+   <ImageView 
+       android:id="@+id/search_no_history"
+       android:layout_width="@dimen/width_45_80"
+       android:layout_height="@dimen/height_20_80"
+       android:src="@drawable/nohistory"
+       android:scaleType="fitXY"
+       android:layout_gravity="center_horizontal"
+       android:layout_marginTop="@dimen/height_4_80"
+       android:visibility="gone" />
+
+</LinearLayout>

@@ -1,0 +1,25 @@
+package com.dbs.book.net;
+
+/**
+ * 作者：luoxing
+ * 主要功能：
+ */
+public class UrlDic {
+
+	public static final String STUDENT_LOGIN_URL = "/app/book/studentLogin.htm";//学生登陆
+	public static final String TEACHER_LOGIN_URL = "/app/book/teacherLogin.htm";//老师登陆
+    public static final String BOOK_SEARCH_URL = "/app/book/query.htm";//书籍模糊搜索
+    public static final String GET_SORT_LIST_URL = "/app/book/findBookType.htm"; //获取分类信息列表
+    public static final String GET_BOOKLIST_BYSORTID = "/app/book/findBookByTypeId.htm"; //按分类Id获取书籍列表
+    public static final String GET_BOOKLIST_BYTOPSORTID = "/app/book/findBookByTopTypeId.htm";//按顶级分类获取书籍列表
+    public static final String GET_CONTENTS_BYBOOKID = "/app/book/findBookChapter.htm";//按书籍Id获取目录
+    public static final String GET_BOOKLIST_BYNAME = "/app/book/findBookByName.htm";//根据书名模糊搜索
+    public static final String RESET_PASSWORD_URL = "/app/book/editPassword.htm";//修改密码
+
+    public static final String GET_USER_INFO_URL = "/app/book/getUserInfo.htm";//个人中心
+
+    public static final String ADD_TO_SHELF_URL = "/app/book/addBook.htm";//加入书架
+    public static final String DELETE_FROM_SHELF_URL = "/app/book/removeBook.htm";//移出书架
+    public static final String GET_SHELF_BOOK_LIST = "/app/book/findBookShelf.htm";//获取书架列表
+
+}

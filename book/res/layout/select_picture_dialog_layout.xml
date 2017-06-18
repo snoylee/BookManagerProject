@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    <ImageView
+        android:id="@+id/text_imageview_one" 
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_50_80"
+        />
+    <View style="@style/fragment_center_divide_line" />
+    <LinearLayout 
+        android:layout_below="@id/text_imageview_one"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true"
+        >
+    <TextView 
+        android:id="@+id/to_photo_album"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_8_80"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:text="@string/to_photo_album_select"
+        />
+    <View style="@style/fragment_center_divide_line" />
+    <TextView
+        android:id="@+id/take_pictrue"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_8_80"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:text="@string/take_pictrue"
+        />
+    <View style="@style/fragment_center_divide_line" />
+    <TextView 
+        android:id="@+id/select_cancle"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_8_80"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:text="@string/select_pictrue_cancle"
+        />
+    </LinearLayout>
+</RelativeLayout>

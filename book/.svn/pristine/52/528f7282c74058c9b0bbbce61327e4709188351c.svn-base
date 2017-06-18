@@ -1,0 +1,94 @@
+package com.dbs.book.ui.adapter;
+
+import java.util.List;
+
+import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import com.dbs.book.R;
+import com.dbs.book.ui.Contants;
+import com.dbs.book.ui.model.SortInfo;
+
+
+public class SortListAdapter extends BaseAdapter {
+
+	private LayoutInflater mInflater;
+	private Context mContext;
+	private List<SortInfo> data;
+	private Resources res;
+	private Drawable icon = null;
+	private int page = 1;
+	ViewHolder holder = null;
+	
+	public SortListAdapter(Context context, List<SortInfo> data, Drawable icon, int page){
+		this.mInflater = LayoutInflater.from(context);
+		this.mContext = context;
+		this.res = context.getResources();
+		this.data = data;
+		this.icon = icon;
+		this.page = page;
+	}
+	
+	@Override
+	public int getCount() {
+		return data == null ? 0 : data.size();
+	}
+
+	@Override
+	public Object getItem(int position) {
+		return data.get(position);
+	}
+
+	@Override
+	public long getItemId(int position) {
+		return position;
+	}
+
+	@Override
+	public View getView(int position, View convertView, ViewGroup parent) {
+		if(page == 1){
+			if(position >= Contants.SORT_ICONS.length){
+				icon = res.getDrawable(Contants.SORT_ICONS[0]);
+			}else{
+				icon = res.getDrawable(Contants.SORT_ICONS[position]);
+			}
+		}
+		
+		if(convertView == null){
+			convertView = mInflater.inflate(R.layout.sort_list_item_layout, null);
+			TextView bookName = (TextView) convertView.findViewById(R.id.sort_list_item_first_book_name);
+			ImageView selectBt = (ImageView) convertView.findViewById(R.id.sort_list_item_first_icon);
+//			RelativeLayout selectRelatlay = (RelativeLayout) convertView.findViewById(R.id.fortlist_list_item_liner);
+			
+			holder = new ViewHolder();
+			holder.bookName =bookName;
+			holder.selectBt = selectBt;
+//			holder.selectRelatlay = selectRelatlay;
+			convertView.setTag(holder);
+			
+		}else{
+			holder = (ViewHolder) convertView.getTag();
+		}
+		SortInfo info = data.get(position);
+		holder.bookName.setText(info.getName());
+		holder.selectBt.setBackground(icon);
+		
+		return convertView;
+	}
+	
+	class ViewHolder{
+		public TextView bookName;
+		public ImageView selectBt;
+//		public RelativeLayout selectRelatlay;
+	
+	}
+	
+}

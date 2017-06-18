@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white_color" >
+
+    <TextView
+        android:id="@+id/contents_list_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:paddingBottom="@dimen/height_1_80"
+        android:paddingTop="@dimen/height_1_80"
+        android:text="第一章"
+        android:textColor="@color/textColor_2"
+        android:textSize="@dimen/text_size_22" />
+
+    <ImageView
+        android:id="@+id/contents_list_arraw"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/item_arraw"
+        android:gravity="center_vertical" />
+
+    <View
+        style="@style/divide_line"
+        android:layout_alignParentBottom="true" />
+
+</RelativeLayout>

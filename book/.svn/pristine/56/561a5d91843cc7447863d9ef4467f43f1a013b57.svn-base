@@ -1,0 +1,93 @@
+package com.dbs.book.ui.adapter;
+
+import com.dbs.book.R;
+import com.dbs.book.app.BaseApplication;
+import com.dbs.book.ui.Contants;
+import com.dbs.book.utils.PhoneUtil;
+
+import android.content.Context;
+import android.provider.ContactsContract.CommonDataKinds.Phone;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.Toast;
+
+public class MainListAdapter extends BaseAdapter {
+
+	private LayoutInflater mInflater;
+	private Context mContext;
+	
+	public MainListAdapter(Context context){
+		this.mInflater = LayoutInflater.from(context);
+		this.mContext = context;
+	}
+	
+	@Override
+	public int getCount() {
+		return 10;
+	}
+
+	@Override
+	public Object getItem(int position) {
+		return position;
+	}
+
+	@Override
+	public long getItemId(int position) {
+		return position;
+	}
+
+	@Override
+	public View getView(int position, View convertView, ViewGroup parent) {
+		ViewHolder holder = null;
+		int color = -1;
+		if(position >= Contants.COLORS.length){
+			color = Contants.COLORS[0];
+		}else{
+			color = Contants.COLORS[position];
+		}
+		if(convertView == null){
+			convertView = mInflater.inflate(R.layout.main_list_item_layout, null);
+			convertView.setVisibility(View.GONE);
+			View line = convertView.findViewById(R.id.mainlist_item_topline);
+			View icon = convertView.findViewById(R.id.mainlist_item_icon);
+			line.setBackgroundColor(mContext.getResources().getColor(color));
+			icon.setBackgroundColor(mContext.getResources().getColor(color));
+			final ImageView iv1 = (ImageView) convertView.findViewById(R.id.book_image_1);
+			final ImageView iv2 = (ImageView) convertView.findViewById(R.id.book_image_2);
+			final ImageView iv3 = (ImageView) convertView.findViewById(R.id.book_image_3);
+			
+			holder = new ViewHolder();
+			holder.iv1 = iv1;
+			holder.iv2 = iv2;
+			holder.iv3 = iv3;
+			holder.line = line;
+			holder.icon = icon;
+			convertView.setTag(holder);
+			
+			int height = PhoneUtil.getDisplayWidth(mContext) / 9 * 4;
+			iv1.getLayoutParams().height = height;
+			iv2.getLayoutParams().height = height;
+			iv3.getLayoutParams().height = height;
+			
+		}else{
+			holder = (ViewHolder) convertView.getTag();
+			holder.line.setBackgroundColor(mContext.getResources().getColor(color));
+			holder.icon.setBackgroundColor(mContext.getResources().getColor(color));
+			
+		}
+		convertView.setVisibility(View.VISIBLE);
+		return convertView;
+	}
+
+	class ViewHolder{
+		public View icon;
+		public View line;
+		public ImageView iv1;
+		public ImageView iv2;
+		public ImageView iv3;
+	}
+	
+}

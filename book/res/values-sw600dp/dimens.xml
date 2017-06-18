@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="text_size_0">15dip</dimen>
+    <dimen name="text_size_1">3.0sp</dimen>
+    <dimen name="text_size_2">4.0sp</dimen>
+    <dimen name="text_size_3">5.0sp</dimen>
+    <dimen name="text_size_4">6.0sp</dimen>
+    <dimen name="text_size_5">7.0sp</dimen>
+    <dimen name="text_size_6">8.0sp</dimen>
+    <dimen name="text_size_7">9.0sp</dimen>
+    <dimen name="text_size_8">10.0sp</dimen>
+    <dimen name="text_size_9">11.0sp</dimen>
+    <dimen name="text_size_10">12.0sp</dimen>
+    <dimen name="text_size_11">13.0sp</dimen>
+    <dimen name="text_size_12">14.0sp</dimen>
+    <dimen name="text_size_13">15.0sp</dimen>
+    <dimen name="text_size_14">16.0sp</dimen>
+    <dimen name="text_size_15">17.0sp</dimen>
+    <dimen name="text_size_16">18.0sp</dimen>
+    <dimen name="text_size_17">19.0sp</dimen>
+    <dimen name="text_size_18">20.0sp</dimen>
+    <dimen name="text_size_19">21.0sp</dimen>
+    <dimen name="text_size_20">22.0sp</dimen>
+    <dimen name="text_size_21">23.0sp</dimen>
+    <dimen name="text_size_22">24.0sp</dimen>
+    <dimen name="text_size_23">25.0sp</dimen>
+    <dimen name="text_size_24">26.0sp</dimen>
+    <dimen name="text_size_25">27.0sp</dimen>
+    <dimen name="text_size_26">28.0sp</dimen>
+    <dimen name="text_size_27">29.0sp</dimen>
+    <dimen name="text_size_28">30.0sp</dimen>
+    <dimen name="text_size_29">31.0sp</dimen>
+    <dimen name="text_size_30">32.0sp</dimen>
+    <dimen name="text_size_31">33.0sp</dimen>
+    <dimen name="text_size_32">34.0sp</dimen>
+    <dimen name="text_size_33">35.0sp</dimen>
+    <dimen name="text_size_34">36.0sp</dimen>
+    <dimen name="text_size_35">37.0sp</dimen>
+    <dimen name="text_size_36">38.0sp</dimen>
+    <dimen name="text_size_37">39.0sp</dimen>
+    <dimen name="text_size_38">40.0sp</dimen>
+    <dimen name="text_size_39">41.0sp</dimen>
+    <dimen name="text_size_40">42.0sp</dimen>
+    <dimen name="text_size_41">43.0sp</dimen>
+    <dimen name="text_size_42">44.0sp</dimen>
+    <dimen name="text_size_43">45.0sp</dimen>
+    <dimen name="text_size_44">46.0sp</dimen>
+    <dimen name="text_size_45">47.0sp</dimen>
+    <dimen name="text_size_46">48.0sp</dimen>
+    <dimen name="text_size_47">49.0sp</dimen>
+    <dimen name="text_size_48">50.0sp</dimen>
+    <dimen name="text_size_49">51.0sp</dimen>
+    <dimen name="text_size_50">52.0sp</dimen>
+
+</resources>

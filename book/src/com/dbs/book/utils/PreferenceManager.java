@@ -1,0 +1,215 @@
+package com.dbs.book.utils;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.StreamCorruptedException;
+import java.util.Map;
+
+import android.app.Application;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.util.Base64;
+
+import com.dbs.book.app.ProjectApp;
+
+
+/**
+ * PreferenceManager
+ * 
+ * @author Luoxing
+ *
+ */
+public class PreferenceManager {
+	
+	private static String DEFAULT_FILE = "DefaultPrefsFile";
+
+	public static Map<String, ?> getAll(Context context, String fileName) {
+		SharedPreferences sp = context.getSharedPreferences(fileName,Context.MODE_APPEND);
+		return sp.getAll();
+	}
+	
+	/**
+	  * @Title: save
+	  * @Description: 使用默认的文件名存储
+	  * @param @param objs 数组{key,value}
+	  * @return void
+	  */
+	public static void save(Object[] objs) {
+		PreferenceManager.save(DEFAULT_FILE, objs);
+	}
+
+	/**
+	  * @Title: get
+	  * @Description: 从默认的文件中读取数据
+	  * @param @param objs 数组{key,value}
+	  * @param @return
+	  * @return Object
+	  */
+	public static Object get(Object[] objs){
+		return PreferenceManager.get(DEFAULT_FILE, objs);
+	}
+	/**
+	 * 
+	 * @param key 要存储的缓存的名字
+	 * @param value 缓存的对象（可以是任何对象，包括集合）
+	 */
+	public static void save(String key, Object value){
+		Object[] objs = new Object[2];
+		objs[0] = key;
+		objs[1] = value;
+		save(objs);
+	}
+	
+	/**
+	 * 
+	 * @param key 要提取的缓存的名字
+	 * @param value 保存的缓存的对象实例,如: new ArrayList<String>();
+	 * @return
+	 */
+	public static Object get(String key, Object value){
+		Object[] objs = new Object[2];
+		objs[0] = key;
+		objs[1] = value;
+		return get(objs);
+	}
+	
+	
+	/**
+	 * 在指定的文件中保存数据
+	 * 
+	 * @param fileName
+	 *            文件名称
+	 * @param objs
+	 *            数组{key,value}
+	 */
+	public static void save(String fileName, Object[] objs) {
+		try {
+			SharedPreferences sp = ProjectApp.getApp().getSharedPreferences(fileName,Context.MODE_APPEND);
+			Editor editor = sp.edit();
+			if (objs[1] instanceof String) {
+				editor.putString(objs[0].toString(), objs[1].toString());
+			} else if (objs[1] instanceof Integer) {
+				editor.putInt(objs[0].toString(),Integer.parseInt(objs[1].toString()));
+			} else if (objs[1] instanceof Long) {
+				editor.putLong(objs[0].toString(),Long.parseLong((objs[1].toString())));
+			} else if (objs[1] instanceof Float) {
+				editor.putFloat(objs[0].toString(),Float.parseFloat((objs[1].toString())));
+			} else if (objs[1] instanceof Boolean) {
+				editor.putBoolean(objs[0].toString(),Boolean.parseBoolean((objs[1].toString())));
+			} else if (objs[1] instanceof Object) {
+				saveObject(objs[0].toString(), objs[1]);
+			}
+			editor.commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
+	}
+
+	/**
+	 * 在指定的文件中读取数据
+	 * 
+	 * @param fileName
+	 *            文件名称
+	 * @param objs
+	 *            数组{key,defaultValue}
+	 */
+	public static Object get(String fileName, Object[] objs) {
+		try {
+			Application app = ProjectApp.getApp();
+			SharedPreferences sp = app.getSharedPreferences(fileName,Context.MODE_APPEND);
+			if (objs[1] instanceof String) {
+				return sp.getString(objs[0].toString(), objs[1].toString());
+			} else if (objs[1] instanceof Integer) {
+				return sp.getInt(objs[0].toString(),Integer.parseInt(objs[1].toString()));
+			} else if (objs[1] instanceof Long) {
+				return sp.getLong(objs[0].toString(),Long.parseLong((objs[1].toString())));
+			} else if (objs[1] instanceof Float) {
+				return sp.getFloat(objs[0].toString(),Float.parseFloat((objs[1].toString())));
+			} else if (objs[1] instanceof Boolean) {
+				return sp.getBoolean(objs[0].toString(),Boolean.parseBoolean((objs[1].toString())));
+			} else if (objs[1] instanceof Object) {
+				return getObject(objs[0].toString());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	/**
+	 * 从默认里获取字符串类型的value
+	 * @author carlos carlosk@163.com
+	 * @version 创建时间：2013-3-7 下午3:22:40
+	 * @param key
+	 * @return
+	 */
+	public static String getValueByKey(String key){
+		SharedPreferences sp = ProjectApp.getApp().getSharedPreferences(DEFAULT_FILE,Context.MODE_APPEND);
+		return sp.getString(key, "");
+	}
+	
+	public static Boolean getBoolean(String key) {
+		SharedPreferences sp = ProjectApp.getApp().getSharedPreferences(DEFAULT_FILE,Context.MODE_APPEND);
+		return sp.getBoolean(key, true);
+	}
+	
+	private static  void saveObject(String key,Object object){
+		SharedPreferences sp = null;
+		ByteArrayOutputStream baos = null;
+		ObjectOutputStream oos = null;
+		try {
+			sp = ProjectApp.getApp().getSharedPreferences("base64", Context.MODE_APPEND);
+			baos = new ByteArrayOutputStream();
+			oos = new ObjectOutputStream(baos);
+			oos.writeObject(object);
+			String objectBase64 = new String(Base64.encode(baos.toByteArray(), Base64.DEFAULT));
+			Editor editor = sp.edit();
+			editor.putString(key, objectBase64);
+			editor.commit();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				oos.close();
+				baos.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	private static Object getObject(String key){
+		Object object = null;
+		ByteArrayInputStream bais = null;
+		ObjectInputStream ois = null;
+		SharedPreferences sp = ProjectApp.getApp().getSharedPreferences("base64", Context.MODE_PRIVATE);
+		String objectBase64 = sp.getString(key,"");
+		if(StringUtil.isEmpty(objectBase64)) return null;
+		byte[] base64 = Base64.decode(objectBase64.getBytes(), Base64.DEFAULT);
+		
+		try {
+			bais = new ByteArrayInputStream(base64);
+			ois = new ObjectInputStream(bais);
+			object = ois.readObject();
+		} catch (StreamCorruptedException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				ois.close();
+				bais.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return object;
+	}
+}

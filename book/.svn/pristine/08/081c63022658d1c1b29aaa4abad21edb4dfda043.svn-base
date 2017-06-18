@@ -1,0 +1,159 @@
+package com.dbs.book.ui.fragment;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.Toast;
+
+import com.alibaba.fastjson.JSON;
+import com.dbs.book.R;
+import com.dbs.book.net.ApiClient;
+import com.dbs.book.ui.activity.BaseActivity;
+import com.dbs.book.ui.activity.SearchListActivity;
+import com.dbs.book.ui.adapter.SortListAdapter;
+import com.dbs.book.ui.model.SortInfo;
+import com.dbs.book.ui.view.titlebar.TitleBar;
+import com.dbs.book.utils.StringUtil;
+public class SortFragment extends Fragment {
+	private int currentpage = 1;
+	private View mRootView;
+	private ListView mListView;
+	private SortListAdapter sortAdapter;
+	private List<SortInfo> data = new ArrayList<SortInfo>();
+	private List<SortInfo> data2 = new ArrayList<SortInfo>();
+	private TitleBar mTitleBar;
+	private Drawable icon;
+	private String titleName = "分类";
+	
+	private Handler sortListHandler =  new Handler(new Handler.Callback() {
+		@Override
+		public boolean handleMessage(Message msg) {
+			if (null == this || null==getActivity())
+				return true;
+			switch (msg.what) {
+				case ApiClient.DATA_OK:
+					onSuccess(msg.obj.toString());
+					break;
+				case ApiClient.DATA_ERR:
+				case ApiClient.SER_ERR:
+			}
+			return true;
+
+		}
+	}); 
+	
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		mRootView = inflater.inflate(R.layout.fragment_sort, null);
+		initView();
+		return mRootView;
+	}
+	
+	protected void onSuccess(String string) {
+		Log.e("分类", string);
+		ArrayList<SortInfo> temp = (ArrayList<SortInfo>) JSON.parseArray(string, SortInfo.class);	
+		data = dealData(temp);
+		sortAdapter = new SortListAdapter(getActivity(), data, null, currentpage);
+		mListView.setAdapter(sortAdapter);
+	}
+	
+	private void initView() {
+		ApiClient.getSortList(sortListHandler);
+		mTitleBar = ((BaseActivity)getActivity()).getTitleBar();
+		mListView = (ListView) mRootView.findViewById(R.id.sort_frag_list_view);
+		setListener();
+	}
+	
+	private void setListener() {
+		mTitleBar.getLeftView().setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if(currentpage == 3){
+					currentpage --;
+					sortAdapter = new SortListAdapter(getActivity(), data2, icon, currentpage);
+					mTitleBar.setTitle(titleName);
+				}else if(currentpage == 2){
+					currentpage --;
+					mTitleBar.hiddenLeftIcon();
+					sortAdapter = new SortListAdapter(getActivity(), data, null, currentpage);
+					mTitleBar.setTitle("分类");
+				}
+				mListView.setAdapter(sortAdapter);
+			}
+		});
+		
+		mListView.setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				SortInfo info = (SortInfo)sortAdapter.getItem(position);
+				List<SortInfo> data = info.getChildren();
+				ImageView iv = (ImageView) view.findViewById(R.id.sort_list_item_first_icon);
+				if(data != null && data.size() > 0){
+					currentpage += 1;
+					icon = iv.getBackground();
+					sortAdapter = new SortListAdapter(getActivity(), data, icon, currentpage);
+					mListView.setAdapter(sortAdapter);
+					if(currentpage == 2){
+						data2.clear();
+						data2.addAll(data);
+						titleName= info.getName();
+					}
+					mTitleBar.setTitle(info.getName());
+					mTitleBar.showLeftIcon();
+				}else{
+					Intent intent = new Intent(getActivity(), SearchListActivity.class);
+					SearchListActivity.searchType = 0;
+					SearchListActivity.isTop = false;
+					intent.putExtra(SearchListActivity.KEYWORD, info.getName());
+					intent.putExtra(SearchListActivity.TYPEID, info.getId());
+					startActivity(intent);
+				}
+			}
+		});
+		
+	}
+
+	private List<SortInfo> dealData(List<SortInfo> tempData){
+		List<SortInfo> data = new ArrayList<SortInfo>();
+		for(int i = 0;i < tempData.size(); i++){
+			SortInfo info = tempData.get(i);
+			if(StringUtil.isEmpty(info.getParent())){
+				data.add(info);
+				tempData.remove(info);
+				getChildren(tempData, info);
+			}
+		}
+		return data;
+	}
+	
+	private void getChildren(List<SortInfo> tempData, SortInfo parent){
+		String id = parent.getId();
+		for(int i = 0;i < tempData.size(); i++){
+			SortInfo info = tempData.get(i);
+			if(id.equals(info.getParent())){
+				parent.getChildren().add(info);
+				getChildren(tempData, info);
+			}
+		}
+	}
+	
+	
+	
+}

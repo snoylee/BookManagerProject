@@ -1,0 +1,38 @@
+package com.dbs.book.ui.activity;
+
+import android.content.Intent;
+import android.os.Bundle;
+
+import com.dbs.book.R;
+import com.dbs.book.app.BaseApplication;
+
+public class SplashActivity extends BaseActivity {
+
+	@Override
+	protected int provideLayoutResId() {
+		return R.layout.activity_splash;
+	}
+
+	@Override
+	protected void initView(Bundle savedInstanceState) {
+		BaseApplication.getHandler().postDelayed(new Runnable() {
+			
+			@Override
+			public void run() {
+				startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+				finish();
+			}
+		}, 2000);
+	}
+
+	@Override
+	protected void initListener() {
+
+	}
+
+	@Override
+	protected void initData(Bundle savedInstanceState) {
+		
+	}
+
+}

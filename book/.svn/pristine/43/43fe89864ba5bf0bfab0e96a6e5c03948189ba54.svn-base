@@ -1,0 +1,200 @@
+package com.dbs.book.ui.activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+
+import android.view.KeyEvent;
+
+import android.view.View;
+
+import android.view.View.OnClickListener;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.dbs.book.R;
+
+import com.dbs.book.ui.fragment.MainFragment;
+import com.dbs.book.ui.fragment.ShelfFragment;
+import com.dbs.book.ui.fragment.SortFragment;
+import com.dbs.book.ui.fragment.UserCenterFragment;
+
+
+public class MainActivity extends BaseActivity implements OnClickListener{
+
+	public static final String MAIN = "main";
+	public static final String SORT = "sort";
+	public static final String USERCENTER = "UserCenter";
+	public static final String SHELF = "shelf";
+	public static String WHICH = "main";
+	private long exitTime;
+	private LinearLayout mHome_LL;
+	private LinearLayout mSort_LL;
+	private LinearLayout mUserCenter_LL;
+	private LinearLayout mShelf_LL;
+	private ImageView mHome_IV;
+	private TextView mHome_TV;
+	private LinearLayout currentSelected;
+	private FrameLayout mContent_FL;
+	private FrameLayout mContent_FL1;
+	private Fragment currentFragment;
+	private FragmentManager fm;
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		if(WHICH.equals(SHELF)){
+			mShelf_LL.performClick();
+		}else if(WHICH.equals(SORT)){
+			mSort_LL.performClick();
+		}else if(WHICH.equals(USERCENTER)){
+			mUserCenter_LL.performClick();
+		}else{
+			mHome_LL.performClick();
+		}
+	}
+	
+	@Override
+	protected int provideLayoutResId() {
+		return R.layout.activity_main;
+	} 
+
+	@Override
+	protected void initView(Bundle savedInstanceState) {
+		initTabs();
+	}
+	private void initTabs() {
+		mHome_LL = (LinearLayout) findViewById(R.id.main_home);
+		mHome_IV = (ImageView) findViewById(R.id.main_home_image);
+		mHome_TV = (TextView) findViewById(R.id.main_home_text);
+		currentSelected = mHome_LL;
+		mHome_IV.setSelected(true);
+		mHome_TV.setSelected(true);
+		
+		mSort_LL = (LinearLayout) findViewById(R.id.main_sort);
+		mUserCenter_LL = (LinearLayout) findViewById(R.id.main_usercenter);
+		mShelf_LL = (LinearLayout) findViewById(R.id.main_shelf);
+		
+		mContent_FL = (FrameLayout) findViewById(R.id.main_content);
+		mContent_FL1 = (FrameLayout) findViewById(R.id.main_content1);
+	}
+
+	@Override
+	protected void initListener() {
+		mHome_LL.setOnClickListener(this);
+		mSort_LL.setOnClickListener(this);
+		mUserCenter_LL.setOnClickListener(this);
+		mShelf_LL.setOnClickListener(this);
+	}
+
+	@Override
+	protected void initData(Bundle savedInstanceState) {
+		fm = getSupportFragmentManager();
+	}
+	
+	private void relaceList(MainFragment fragment){
+		mContent_FL.setVisibility(View.VISIBLE);
+		mContent_FL1.setVisibility(View.GONE);
+		if(mContent_FL.getChildCount() > 0) return;
+		FragmentTransaction ft = fm.beginTransaction();
+		ft.add(R.id.main_content, fragment);
+		ft.commit();
+	}
+	
+	private void replaceContent(Fragment fragment){
+		FragmentTransaction ft = fm.beginTransaction();
+		mContent_FL.setVisibility(View.GONE);
+		mContent_FL1.setVisibility(View.VISIBLE);
+		mContent_FL1.removeAllViews();
+		ft.add(R.id.main_content1, fragment);
+		ft.commit();
+	}
+	
+	@Override
+	public void onRightClicked() {
+		super.onRightClicked();
+	}
+	
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+			if ((System.currentTimeMillis() - exitTime) > 2000) {
+				Toast.makeText(this, "再按一次退出图书馆", Toast.LENGTH_SHORT).show();
+				exitTime = System.currentTimeMillis();
+			} else {
+				finish();
+			}
+			return true;
+		}
+		return super.onKeyDown(keyCode, event);
+	}
+
+	@Override
+	protected void initTitleBar() {
+		super.initTitleBar();
+		mTitleBar.hiddenLeftIcon();
+	}
+
+	@Override
+	public void onClick(View v) {
+		changeTabsStatus(v);
+	}
+	
+	private void changeTabsStatus(View v){
+		currentSelected.getChildAt(0).setSelected(false);
+		currentSelected.getChildAt(1).setSelected(false);
+		setSelected((LinearLayout)v);
+		
+		switch (v.getId()) {
+		case R.id.main_home:
+			mTitleBar.setTitle("首页");
+			mTitleBar.hiddenLeftIcon();
+			WHICH = MAIN;
+			relaceList(new MainFragment());
+			break;
+		case R.id.main_sort:
+			mTitleBar.setTitle("分类");
+			WHICH = SORT;
+			replaceContent(new SortFragment());
+			break;
+		case R.id.main_usercenter:
+			WHICH = USERCENTER;
+			mTitleBar.hiddenLeftIcon();
+			mTitleBar.setTitle("个人中心");
+			replaceContent(new UserCenterFragment());
+			break;
+		case R.id.main_shelf:
+			WHICH = SHELF;
+			mTitleBar.hiddenLeftIcon();
+			mTitleBar.setTitle("书架");
+			replaceContent(new ShelfFragment());
+			break;
+
+		default:
+			break;
+		}
+	}
+	
+	private void setSelected(LinearLayout view){
+		currentSelected = view;
+		currentSelected.getChildAt(0).setSelected(true);
+		currentSelected.getChildAt(1).setSelected(true);
+	}
+	 
+	@Override
+	protected void onActivityResult(int arg0, int arg1, Intent arg2) {
+		super.onActivityResult(arg0, arg1, arg2);
+		if(arg2 == null){
+			Toast.makeText(this, "null", 0).show();
+		}else{
+			Toast.makeText(this, "not null", 0).show();
+		}
+	}
+	
+}

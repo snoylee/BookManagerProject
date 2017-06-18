@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/shef_relative_layout"
+    android:orientation="vertical" >
+	<RelativeLayout 
+        android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:layout_marginTop="@dimen/width_2_80"
+    	android:layout_marginBottom="@dimen/height_3_80"
+	    >
+    <com.duowan.mobile.netroid.image.NetworkImageView
+        android:id="@+id/shelf_list_face_iv"
+        android:layout_width="@dimen/width_17_80"
+        android:layout_height="@dimen/width_23_80"
+        android:layout_marginRight="@dimen/width_2_80"
+        android:background="@drawable/book_default_cover"
+        android:scaleType="fitXY"
+        android:layout_marginLeft="@dimen/width_2_80" 
+        />
+
+    <TextView
+        android:id="@+id/shelf_list_name_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/shelf_list_face_iv"
+        android:layout_toRightOf="@+id/shelf_list_face_iv"
+        android:paddingBottom="@dimen/height_1_80"
+        android:paddingTop="@dimen/height_1_80"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:text="绿山墙的安妮"
+        android:textColor="@color/textColor_3"
+        android:textSize="@dimen/text_size_18" />
+
+    <TextView
+        android:id="@+id/shelf_list_local_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/shelf_list_face_iv"
+        android:layout_marginLeft="@dimen/width_2_80"
+        android:layout_toRightOf="@+id/shelf_list_name_tv"
+        android:paddingBottom="@dimen/height_1_80"
+        android:paddingTop="@dimen/height_1_80"
+        android:text="离线"
+        android:textColor="@color/main_color"
+        android:textSize="@dimen/text_size_13" />
+
+    <TextView
+        android:id="@+id/shelf_list_sort_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/shelf_list_name_tv"
+        android:layout_toRightOf="@+id/shelf_list_face_iv"
+        android:paddingBottom="@dimen/height_1_80"
+        android:text="分类：文学    散文随笔"
+        android:textColor="@color/textColor_2"
+        android:textSize="@dimen/text_size_15" />
+
+    <TextView
+        android:id="@+id/shelf_list_intro_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/shelf_list_sort_tv"
+        android:layout_toRightOf="@+id/shelf_list_face_iv"
+        android:paddingBottom="@dimen/height_1_80"
+        android:singleLine="true"
+        android:text="纯美职场之爱《你在我的世界之外》纯美职场之爱纯美职场之爱纯美职场之爱"
+        android:textColor="@color/textColor_1"
+        android:textSize="@dimen/text_size_13" />
+    <View
+        android:layout_below="@id/shelf_list_intro_tv"
+        style="@style/divide_line"
+        android:layout_marginTop="@dimen/width_4_80"
+        android:layout_alignParentBottom="true" />
+    </RelativeLayout>
+</RelativeLayout>

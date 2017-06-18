@@ -1,0 +1,133 @@
+package com.dbs.book.net;
+
+import java.io.UnsupportedEncodingException;
+
+import org.apache.http.entity.StringEntity;
+import org.apache.http.protocol.HTTP;
+
+import android.content.Context;
+
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.BinaryHttpResponseHandler;
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+/**
+ * @ClassName �?RestClient
+ * @Description: 网络请求
+ * @author �?jiaxue
+ * @date �?2015-3-15 下午4:36:42
+ */
+
+public class RestClient {
+	private static final String BASE_URL = "http://192.168.2.34:8080/mobi";
+	public static AsyncHttpClient client = new AsyncHttpClient();
+
+	static {
+		client.setTimeout(5000); // 设置链接超时，如果不设置，默认为5s
+	}
+	public static AsyncHttpClient getClient() {
+		if (client == null) {
+			client = new AsyncHttpClient();
+		}
+		return client;
+	}
+	private static AsyncHttpClient clientCart;
+	
+	public static AsyncHttpClient getClientCart() {
+		if (clientCart == null) {
+			clientCart = new AsyncHttpClient();
+//			clientCart.addHeader("authorization", "Bearer "
+//					+ DemoApplication.getInstance().getLoginInfo().getAccess_token());
+			clientCart.addHeader("Content-Type", "application/json");
+		}
+		return clientCart;
+	}
+	private static String getAbsoluteUrl(String relativeUrl) {
+		return BASE_URL + relativeUrl;
+	}
+
+	// get 用一个完整url获取�?��string对象
+	public static void get(String urlString, AsyncHttpResponseHandler res) {
+		getClient().get(getAbsoluteUrl(urlString), res);
+	}
+
+	// get url里面带参�?
+	public static void get(String urlString, RequestParams params,
+			AsyncHttpResponseHandler res) {
+		getClient().get(getAbsoluteUrl(urlString), params, res);
+	}
+
+	// get 不带参数，获取json对象或�?数组
+	public static void get(String urlString, JsonHttpResponseHandler res) {
+		getClient().get(getAbsoluteUrl(urlString), res);
+	}
+
+	// get 带参数，获取json对象或�?数组
+	public static void get(String urlString, RequestParams params,
+			JsonHttpResponseHandler res) {
+		getClient().get(getAbsoluteUrl(urlString), params, res);
+	}
+
+	// get 下载数据使用，会返回byte数据
+	public static void get(String urlString, BinaryHttpResponseHandler bHandler) {
+		getClient().get(getAbsoluteUrl(urlString), bHandler);
+	}
+
+	// get 下载数据使用，会返回byte数据
+	public static void get(String urlString, RequestParams params,
+			BinaryHttpResponseHandler bHandler) {
+		getClient().get(getAbsoluteUrl(urlString), params, bHandler);
+	}
+
+	// post 用一个完整url获取�?��string对象
+	public static void post(String urlString, AsyncHttpResponseHandler res) {
+		getClient().post(getAbsoluteUrl(urlString), res);
+	}
+
+	// post url里面带参�?
+	public static void post(String urlString, RequestParams params,
+			AsyncHttpResponseHandler res) {
+		client.post(getAbsoluteUrl(urlString), params, res);
+	}
+	
+	// post url里面带参�?
+	public static void post(Context context, String urlString,
+			RequestParams params, AsyncHttpResponseHandler res) {
+		getClient().post(context, getAbsoluteUrl(urlString), null, params, "application/json", res);
+	}
+
+	// post 不带参数，获取json对象或�?数组
+	public static void post(String urlString, JsonHttpResponseHandler res) {
+		getClient().post(getAbsoluteUrl(urlString), res);
+	}
+	// post 带参数，获取json对象或�?数组
+	public static void post(String urlString, RequestParams params,
+			JsonHttpResponseHandler res) {
+		getClient().post(getAbsoluteUrl(urlString), params, res);
+	}
+	/**
+     * 向服务器端发送数�?
+     *
+     * @param context         上行�?
+     * @param url             url地址
+     * @param jsonString      json数据
+     * @param responseHandler 数据接收handler
+     * @throws java.io.UnsupportedEncodingException
+     */
+    public static void postJson(Context context, String url, String jsonString,
+                                AsyncHttpResponseHandler responseHandler) {
+    	StringEntity entityJson;
+        try {
+            entityJson = new StringEntity(jsonString, HTTP.UTF_8);
+            getClientCart().post(context, getAbsoluteUrl(url), entityJson,
+                    "application/json", responseHandler);
+        } catch (UnsupportedEncodingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+    }
+
+}

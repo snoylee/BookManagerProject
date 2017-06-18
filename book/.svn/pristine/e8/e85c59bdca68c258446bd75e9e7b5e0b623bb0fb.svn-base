@@ -1,0 +1,66 @@
+package com.dbs.book.ui.fragment;
+
+import java.util.ArrayList;
+
+import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.Toast;
+
+import com.dbs.book.R;
+import com.dbs.book.app.BaseApplication;
+import com.dbs.book.ui.adapter.MainListAdapter;
+import com.dbs.book.ui.adapter.MainViewPagerAdapter;
+import com.dbs.book.ui.view.normal.XViewPageSet;
+
+public class MainFragment extends Fragment {
+	private View mRootView;
+	private ListView mListView;
+	private XViewPageSet mViewPager;
+	private MainListAdapter adapter;
+	
+	
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		mRootView = inflater.inflate(R.layout.fragment_main, null);
+		initView();
+		return mRootView;
+	}
+
+	private void initView() {
+		mListView = (ListView) mRootView.findViewById(R.id.main_list);
+		
+		mViewPager = new XViewPageSet(getActivity());
+		ArrayList<View> mListViews = new ArrayList<View>();
+	    ArrayList<Drawable> drawables = new ArrayList<Drawable>();
+	    mListViews.add(new ImageView(getActivity()));
+	    mListViews.add(new ImageView(getActivity()));
+	    mListViews.add(new ImageView(getActivity()));
+	    mListViews.add(new ImageView(getActivity()));
+	    
+	    drawables.add(getResources().getDrawable(R.drawable.aaa));
+	    drawables.add(getResources().getDrawable(R.drawable.bbb));
+	    drawables.add(getResources().getDrawable(R.drawable.ccc));
+	    drawables.add(getResources().getDrawable(R.drawable.ddd));
+	    
+		MainViewPagerAdapter viewPagerAdapter = new MainViewPagerAdapter(getActivity(), mListViews, drawables);
+		mViewPager.setPageCount(4);
+		mViewPager.setAdapter(viewPagerAdapter);
+		mViewPager.setStartAutoRun(3000);
+		mListView.addHeaderView(mViewPager);
+		
+		adapter = new MainListAdapter(getActivity());
+		mListView.setAdapter(adapter);
+		
+	}
+	
+	
+	
+}

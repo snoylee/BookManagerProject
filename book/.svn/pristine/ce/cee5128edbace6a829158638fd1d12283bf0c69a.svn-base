@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/main_bg" >
+
+    <com.dbs.book.ui.view.titlebar.TitleBar
+        style="@style/titlebarstyle"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        app:action = "书架" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/book_detail_optioins_ll"
+        android:layout_below="@id/titlebar" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/height_2_80"
+                android:paddingLeft="@dimen/width_4_80"
+                android:background="@color/white_color" >
+
+                <com.duowan.mobile.netroid.image.NetworkImageView
+                    android:id="@+id/book_detail_Image"
+                    android:layout_width="@dimen/width_22_80"
+                    android:layout_height="@dimen/height_22_80"
+                    android:scaleType="fitXY"
+                    android:background="@drawable/book_default_cover"
+                    android:layout_marginTop="@dimen/height_1_80"
+                    android:layout_marginBottom="@dimen/height_1_80" />
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/width_2_80"
+                    android:layout_marginTop="@dimen/height_1_80"
+                    android:layout_toRightOf="@id/book_detail_Image"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:id="@+id/book_detail_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/height_2_80"
+                        android:text="路上墙的安妮"
+                        android:textColor="@color/book_iamge_back"
+                        android:textSize="22sp" />
+
+                    <TextView
+                        android:id="@+id/book_detail_type"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/height_1_80"
+                        android:text="分类:"
+                        android:textColor="@color/book_detail_type_text_back"
+                        android:textSize="22sp" />
+
+                    <TextView
+                        android:id="@+id/book_detail_readed_person_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/height_1_80"
+                        android:text="已有25人阅读"
+                        android:textColor="@color/book_detail_type_text_back"
+                        android:textSize="22sp" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <View style="@style/divide_line" />
+
+            <TextView
+                android:id="@+id/book_detail_summary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white_color"
+                android:maxLines="5"
+                android:padding="@dimen/width_4_80"
+                android:textColor="@color/back_detail_fummy_back"
+                android:textSize="@dimen/text_size_18" />
+
+            <View style="@style/divide_line" />
+
+            <View
+                style="@style/divide_line"
+                android:layout_marginTop="@dimen/height_3_80" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/width_4_80"
+                android:paddingRight="@dimen/width_4_80"
+                android:background="@color/white_color"
+                android:gravity="center_vertical"
+                android:paddingBottom="@dimen/height_2_80"
+                android:paddingTop="@dimen/height_2_80" >
+
+                <TextView
+                    android:id="@+id/book_detail_mulu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="目录"
+                    android:textColor="@color/mulu_back_color"
+                    android:textSize="@dimen/text_size_20" />
+
+                <TextView
+                    android:id="@+id/book_detail_all_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:gravity="center"
+                    android:text="共168章"
+                    android:textColor="@color/all_zhang_back_color"
+                    android:textSize="@dimen/text_size_15" />
+            </RelativeLayout>
+
+            <View style="@style/divide_line" />
+
+            <com.dbs.book.ui.view.normal.NoScrollListView
+                android:id="@+id/bookdetail_contents_listview"
+                android:background="@color/white_color"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/width_4_80"
+                android:paddingRight="@dimen/width_4_80"
+                android:divider="@null"
+                android:fadingEdge="none"
+                android:scrollbars="none" />
+
+            <TextView
+                android:id="@+id/book_mulu_look_all"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/height_8_80"
+                android:background="@color/white_color"
+                android:gravity="center"
+                android:text="查看全部"
+                android:textColor="@color/look_all_back"
+                android:textSize="22sp" />
+
+            <View style="@style/divide_line" />
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/book_detail_optioins_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/height_0_80"
+        android:background="@color/white_color"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/book_detail_start_read"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/width_4_80"
+            android:layout_weight="1"
+            android:background="@drawable/selector_bookdetail_option"
+            android:gravity="center"
+            android:paddingTop="@dimen/height_1_80"
+            android:paddingBottom="@dimen/height_1_80"
+            android:text="开始阅读"
+            android:textColor="@drawable/selector_bookdetail_option_text"
+            android:textSize="@dimen/text_size_18" />
+
+        <TextView
+            android:id="@+id/book_detail_download"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/width_2_80"
+            android:layout_marginRight="@dimen/width_2_80"
+            android:layout_weight="1"
+            android:background="@drawable/selector_bookdetail_option"
+            android:gravity="center"
+            android:paddingTop="@dimen/height_1_80"
+            android:paddingBottom="@dimen/height_1_80"
+            android:text="下载"
+            android:textColor="@drawable/selector_bookdetail_option_text"
+            android:textSize="@dimen/text_size_18" />
+
+        <TextView
+            android:id="@+id/book_detail_add_shujia"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/width_4_80"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:paddingTop="@dimen/height_1_80"
+            android:paddingBottom="@dimen/height_1_80"
+            android:text="加入书架"
+            android:background="@drawable/selector_bookdetail_option"
+            android:textColor="@drawable/selector_bookdetail_option_text"
+            android:textSize="@dimen/text_size_18" />
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fortlist_list_item_liner"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/height_20_80" >
+
+    <ImageView
+        android:id="@+id/sort_list_item_first_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center"
+        android:layout_marginLeft="@dimen/width_4_80"
+        android:layout_marginTop="@dimen/height_1_80" />
+
+    <TextView
+        android:id="@+id/sort_list_item_first_book_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/width_2_80"
+        android:layout_toRightOf="@+id/sort_list_item_first_icon"
+        android:text="数学"
+        android:textColor="#8e8e8e"
+        android:textSize="@dimen/text_size_18" />
+
+    <ImageView
+        android:id="@+id/sort_list_itme_first_chick_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/sort_list_item_first_book_name"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="@dimen/width_4_80"
+        android:src="@drawable/item_arraw"
+        android:textColor="#8e8e8e" />
+
+    <View
+        style="@style/divide_line"
+        android:layout_alignParentBottom="true" />
+
+</RelativeLayout>

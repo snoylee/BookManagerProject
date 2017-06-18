@@ -1,0 +1,240 @@
+package com.dbs.book.ui.fragment;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.dbs.book.R;
+
+import com.dbs.book.net.ApiClient;
+
+import com.dbs.book.ui.activity.DialogActivity;
+import com.dbs.book.ui.activity.ResetPasswordActivity;
+
+
+import java.io.IOException;
+import java.io.InputStream;
+
+
+
+import com.dbs.book.utils.PictureUtil;
+
+
+import android.content.Context;
+
+
+
+import android.content.Intent;
+
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
+
+import android.os.Bundle;
+
+import android.os.Handler;
+import android.os.Message;
+
+
+
+import android.support.v4.app.Fragment;
+
+import android.util.Base64;
+import android.util.Log;
+
+
+
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+
+import android.widget.ImageView;
+
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class UserCenterFragment extends Fragment implements OnClickListener{
+	private View mRootView;
+	private RelativeLayout resetPwd_RL;
+
+	private RelativeLayout resetUserImage;
+
+	//private UserInfoDialog dialog;
+
+	public static final int ROUNDPX = 50;
+    private ImageView userNameImage;
+    private TextView fragmentCenterUserName,fragmentCenterGradeClass;
+    private TextView fragmentCenterReadedTextContent,fragmentCenterReadedTextContentCount;
+    private TextView fragmenTCenterReadingTextContent,fragmentCenterReadingTextContentCount;
+    
+    private JSONObject centerUserInfos ;
+    SharedPreferences pre;
+    private  Handler handle = new Handler(){
+		 public void handleMessage(android.os.Message msg) {
+			 if(msg.arg1 == 01){
+				 Bitmap bitmap = (Bitmap) msg.obj;
+				 userNameImage.setImageBitmap(bitmap);
+	        	 Editor editor = pre.edit();
+	        	 editor.putString("userNameImage", DialogActivity.bitmaptoString(bitmap));
+	        	 editor.commit();
+			 }
+		 };
+	 };
+    private Handler userInfoHandler =  new Handler(new Handler.Callback() {
+		@Override
+		public boolean handleMessage(Message msg) {
+			if (null == this || null==getActivity())
+				return true;
+			switch (msg.what) {
+				case ApiClient.DATA_OK:
+					onSuccess(msg.obj.toString());
+					break;
+				case ApiClient.DATA_ERR:
+				case ApiClient.SER_ERR:
+				Toast.makeText(getActivity(), msg.obj.toString(), 0).show();	
+			}
+			return true;
+		}
+	}); 
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		mRootView = inflater.inflate(R.layout.fragment_usercenter, null);
+		pre = getActivity().getSharedPreferences("dingboshi",Context.MODE_APPEND);
+		initView();
+		return mRootView;
+	}
+	protected void onSuccess(String string) {
+		Log.d("userCenterFragment", string);
+		Log.d("userCenterFragment", string);
+		centerUserInfos = JSON.parseObject(string);
+
+//	    "account": "xs20",
+//	    "readAmount": 6,
+//	    "headImg": "http://192.168.2.34/school/images/student_male.gif",
+//	    "readNum": 2,
+//	    "clazz": "1"
+		//{"account":"ls5","grade":"高三","readAmount":0,"headImg":"http:\/\/192.168.2.34\/school\/images\/teacher_male.gif","readNum":0,"clazz":"0"}		
+		
+		fragmentCenterUserName.setText(centerUserInfos.getString("account"));
+		if(centerUserInfos.getString("clazz").equals("0")){
+			fragmentCenterGradeClass.setText(centerUserInfos.getString("grade")+"  ");
+		}else{
+			fragmentCenterGradeClass.setText(centerUserInfos.getString("clazz"));
+		}
+		fragmentCenterReadedTextContentCount.setText(centerUserInfos.get("readAmount")+" ");
+		//fragmenTCenterReadingTextContent.setText();
+		fragmentCenterReadingTextContentCount.setText(centerUserInfos.get("readNum")+" ");
+		final String headImag = centerUserInfos.getString("headImg");
+		Log.d("deadImag", headImag);
+		String userNameImage = pre.getString("userNameImage", "");
+		String bitmapStr = pre.getString("bitmap","");
+		if(userNameImage.equals("")){
+			new Thread(new  Runnable() {
+				public void run() {
+					Bitmap  bit =returnBitMap(headImag);
+					Message  messge = new Message();
+					messge.arg1 = 01;
+					messge.obj = bit;
+					handle.sendMessage(messge);
+				}
+			}).start();
+			
+		}else if(!bitmapStr.equals("")){
+			setData();
+		}
+	}
+	public Bitmap returnBitMap(String url){ 
+		URL myFileUrl = null;   
+		Bitmap bitmap = null;  
+		try {   
+			myFileUrl = new URL(url);   
+		} catch (MalformedURLException e) {   
+			e.printStackTrace();   
+		}   
+		try {   
+			HttpURLConnection conn = (HttpURLConnection) myFileUrl   
+					.openConnection();   
+			conn.setDoInput(true);   
+			conn.connect();   
+			InputStream is = conn.getInputStream();   
+			bitmap = BitmapFactory.decodeStream(is);   
+			is.close();   
+		} catch (IOException e) {   
+			e.printStackTrace();   
+		}   
+		return bitmap;   
+	}   
+
+	private void initView() {
+		ApiClient.getUserInfo(userInfoHandler);
+		
+		resetPwd_RL = (RelativeLayout) mRootView.findViewById(R.id.usercenter_resetpassword_rl);
+		resetUserImage = (RelativeLayout) mRootView.findViewById(R.id.usercenter_reset_user_image_rl);
+		
+		userNameImage = (ImageView) mRootView.findViewById(R.id.user_name_image);
+		fragmentCenterUserName = (TextView) mRootView.findViewById(R.id.fragment_center_user_name);
+		fragmentCenterGradeClass = (TextView) mRootView.findViewById(R.id.fragment_center_grade_class);
+		fragmentCenterReadedTextContent = (TextView) mRootView.findViewById(R.id.fragment_center_readed_text_content);
+		fragmentCenterReadedTextContentCount= (TextView) mRootView.findViewById(R.id.fragment_center_readed_text_content_count);
+		fragmenTCenterReadingTextContent= (TextView) mRootView.findViewById(R.id.fragment_center_reading_text_content);
+		fragmentCenterReadingTextContentCount= (TextView) mRootView.findViewById(R.id.fragment_center_reading_text_content_count);
+		//setData();
+		
+		resetPwd_RL.setOnClickListener(this);
+		resetUserImage.setOnClickListener(this);
+		
+		
+	}
+	private void setData() {
+		SharedPreferences pre = getActivity().getSharedPreferences("dingboshi",Context.MODE_APPEND);
+		String bitmapStr = pre.getString("bitmap","");
+		Bitmap bitmap = stringtoBitmap(bitmapStr);
+		
+		Log.d("Diabitmap", "user = "+ bitmap);
+    	Log.d("Diabitmap", "user = "+pre.getString("bitmap", ""));
+		if(bitmap != null){
+			userNameImage.setImageBitmap(PictureUtil.getRoundedCornerBitmap(bitmap, ROUNDPX));
+		}else{
+			return;
+		}
+	}
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.usercenter_resetpassword_rl:
+			startActivity(new Intent(getActivity(), ResetPasswordActivity.class));
+			break;
+		case R.id.usercenter_reset_user_image_rl:
+			newDialog();
+			break;
+		default:
+			break;
+		}
+	}
+
+	public Bitmap stringtoBitmap(String string){
+		    //将字符串转换成Bitmap类型
+		    Bitmap bitmap=null;
+		    try {
+		    byte[]bitmapArray;
+		    bitmapArray=Base64.decode(string, Base64.DEFAULT);
+		    bitmap=BitmapFactory.decodeByteArray(bitmapArray, 0, bitmapArray.length);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+		    
+		    return bitmap;
+	 }
+	private void newDialog() {
+		Intent intent = new Intent(getActivity(),DialogActivity.class);
+		startActivity(intent);
+	}
+
+}

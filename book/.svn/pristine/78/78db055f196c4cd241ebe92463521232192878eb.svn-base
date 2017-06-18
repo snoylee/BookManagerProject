@@ -1,0 +1,290 @@
+package com.dbs.book.ui.fragment;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import android.app.Dialog;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
+import android.view.animation.TranslateAnimation;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.alibaba.fastjson.JSON;
+import com.dbs.book.R;
+import com.dbs.book.app.ProjectApp;
+import com.dbs.book.net.ApiClient;
+import com.dbs.book.ui.activity.BookDetailActivity;
+import com.dbs.book.ui.activity.ReadActivity;
+import com.dbs.book.ui.adapter.BookListAdapter;
+import com.dbs.book.ui.adapter.VedioListAdapter;
+import com.dbs.book.ui.model.BookInfo;
+import com.dbs.book.ui.model.Response;
+import com.dbs.book.ui.view.swipemenulistview.SwipeMenu;
+import com.dbs.book.ui.view.swipemenulistview.SwipeMenuCreator;
+import com.dbs.book.ui.view.swipemenulistview.SwipeMenuItem;
+import com.dbs.book.ui.view.swipemenulistview.SwipeMenuListView;
+import com.dbs.book.ui.view.swipemenulistview.SwipeMenuListView.OnMenuItemClickListener;
+import com.dbs.book.utils.CommonUtils;
+import com.dbs.book.utils.DialogFactory;
+import com.dbs.book.utils.PhoneUtil;
+import com.dbs.book.utils.PreferenceManager;
+import com.dbs.book.utils.StringUtil;
+import com.duowan.mobile.netroid.Listener;
+import com.duowan.mobile.netroid.NetroidError;
+import com.duowan.mobile.netroid.toolbox.FileDownloader;
+import com.loopj.android.http.RequestParams;
+
+public class ShelfFragment extends Fragment implements View.OnClickListener{
+
+	private static final String SHELF_LIST = "SHELF_LIST";
+	private SwipeMenuListView mBookList_LV;
+	private ImageView indicator;
+	private TextView showBook;
+	private TextView showVedio;
+	private BookListAdapter bookAdapter;
+	private VedioListAdapter vedioAdapter;
+	private BookInfo bookInfo;
+	private Dialog dialog;
+	private List<BookInfo> data = new ArrayList<BookInfo>();
+	
+	private Handler deleteFromShelfHandler = new Handler(new Handler.Callback() {
+		@Override
+		public boolean handleMessage(Message msg) {
+			if (null == this || null==getActivity() || getActivity().isFinishing())
+				return true;
+			switch (msg.what) {
+				case ApiClient.DATA_OK:
+					PreferenceManager.save(SHELF_LIST, msg.obj.toString());
+					ondeleteFromShelfuccess(msg.obj.toString());
+					Log.e("========", msg.obj.toString());
+					break;
+				case ApiClient.DATA_ERR:
+				case ApiClient.SER_ERR:
+					Toast.makeText(getActivity(), msg.obj.toString(), 0).show();
+					break;
+			}
+			return true;
+		}
+
+	});
+	
+	private Handler getShelfBookListHandler = new Handler(new Handler.Callback() {
+		@Override
+		public boolean handleMessage(Message msg) {
+			if (null == this || null==getActivity() || getActivity().isFinishing())
+				return true;
+			switch (msg.what) {
+				case ApiClient.DATA_OK:
+					PreferenceManager.save(SHELF_LIST, msg.obj.toString());
+					ongetShelfBookListsuccess(msg.obj.toString());
+					Log.e("========", msg.obj.toString());
+					break;
+				case ApiClient.DATA_ERR:
+				case ApiClient.SER_ERR:
+					Toast.makeText(getActivity(), msg.obj.toString(), 0).show();
+					break;
+			}
+			return true;
+		}
+
+	});
+	
+	protected void ondeleteFromShelfuccess(String string) {
+		Response response = JSON.parseObject(string, Response.class);
+		if(response != null){
+			if(response.getError().equals("0")){
+				Toast.makeText(getActivity(), "移除成功", 0).show();
+				data.remove(bookInfo);
+				bookAdapter = new BookListAdapter(getActivity(), data);
+				mBookList_LV.setAdapter(bookAdapter);
+			}else{
+				Toast.makeText(getActivity(), response.getError(), 0).show();
+			}
+		}else{
+			Toast.makeText(getActivity(), ApiClient.DATA_TITLE, 0).show();
+		}
+	}
+	
+	protected void ongetShelfBookListsuccess(String string) {
+		if(StringUtil.isEmpty(string)) return;
+		data = JSON.parseArray(string, BookInfo.class);
+		bookAdapter = new BookListAdapter(getActivity(), data);
+		mBookList_LV.setAdapter(bookAdapter);
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		View root = inflater.inflate(R.layout.fragment_shelf, null);
+		findView(root);
+		setListener();
+		initView();
+		return root;
+	}
+
+	private void setListener() {
+		showBook.setOnClickListener(this);
+		showVedio.setOnClickListener(this);
+		
+		mBookList_LV.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				if(isDownloaded(data.get(position).getName() + ".txt" )){
+					ReadActivity.fileName = data.get(position).getName();
+					ReadActivity.bookId = data.get(position).getId();
+					startActivity(new Intent(getActivity(), ReadActivity.class));
+				}else{
+					showDialog(data.get(position));
+				}
+			}
+		});
+		
+		mBookList_LV.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+			
+			@Override
+			public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
+				RequestParams params = new RequestParams();
+				bookInfo = data.get(position);
+				params.add("bookId", bookInfo.getId());
+				ApiClient.deleteFromShelf(params, deleteFromShelfHandler);
+				return false;
+			}
+		});
+	}
+	
+	protected void showDialog(final BookInfo bookInfo) {
+		DialogFactory.showSimpleWarnDialog(getActivity(), "提示", "该文件不存在，是否先下载？", "立即下载", "取消", new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				downloadAndRead(bookInfo);
+			}
+		}, null, null);
+	}
+	
+
+	protected void downloadAndRead(final BookInfo bookInfo) {
+		String downloadPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+		File file = new File(downloadPath, "dingboshi");
+		if(!file.exists()){
+			file.mkdir();
+		}
+		FileDownloader.DownloadController controller = ProjectApp.mFileDownloader.add(file.getAbsolutePath() + "/" + bookInfo.getName() + ".txt", bookInfo.getTxtUrl(), new Listener<Void>() {
+			
+			@Override
+			public void onSuccess(Void arg0) {
+				ReadActivity.bookId = bookInfo.getId();
+				ReadActivity.fileName = bookInfo.getName();
+				startActivity(new Intent(getActivity(), ReadActivity.class));
+			}
+			
+			@Override
+			public void onError(NetroidError error) {
+				super.onError(error);
+				String msg = "";
+				if(!StringUtil.isEmpty(error.getMessage())){
+					msg = error.getMessage();
+				}
+				Toast.makeText(getActivity(), "下载失败!" + msg, 0).show();
+			}
+		});
+	}
+
+	private boolean isDownloaded(String bookName){
+		File root = new File(Environment.getExternalStorageDirectory().getAbsoluteFile(), "dingboshi");
+		if(root.exists()){
+			File[] fileList = root.listFiles(); 
+			for(File f : fileList){
+				Log.e("fileName==", f.getName());
+				if(f.isFile() && f.getName().equals(bookName)){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	private void findView(View root) {
+		mBookList_LV = (SwipeMenuListView) root.findViewById(R.id.shelf_listview);
+		indicator = (ImageView) root.findViewById(R.id.indicator);
+		showBook = (TextView) root.findViewById(R.id.shelf_show_book);
+		showVedio = (TextView) root.findViewById(R.id.shelf_show_vedio);
+	}
+
+	private void initView() {
+		if(CommonUtils.isNetworkAvailable(getActivity())){
+			ApiClient.getShelfBookList(getShelfBookListHandler);
+		}else{
+			ongetShelfBookListsuccess(PreferenceManager.getValueByKey(SHELF_LIST));
+		}
+		
+		SwipeMenuCreator creator = new SwipeMenuCreator() {
+			
+			@Override
+			public void create(SwipeMenu menu) {
+				SwipeMenuItem deleteItem = new SwipeMenuItem(getActivity());
+					    deleteItem.setBackground(new ColorDrawable(Color.rgb(0xF9,0x3F, 0x25)));
+					    deleteItem.setWidth((int)getResources().getDimension(R.dimen.width_22_80));
+					    deleteItem.setTitle("移除");
+					    deleteItem.setTitleSize(18);
+					    deleteItem.setTitleColor(Color.WHITE);
+					    menu.addMenuItem(deleteItem);
+			}
+		};
+		mBookList_LV.setMenuCreator(creator);
+		
+		vedioAdapter = new VedioListAdapter(getActivity());
+		bookAdapter = new BookListAdapter(getActivity(), data);
+		mBookList_LV.setAdapter(bookAdapter);
+		
+		LayoutParams params = indicator.getLayoutParams();
+		params.width = PhoneUtil.getDisplayWidth(getActivity()) / 2;
+		indicator.setLayoutParams(params);
+	}
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.shelf_show_book:
+			changeStatu(showBook, showVedio);
+			mBookList_LV.setAdapter(bookAdapter);
+			break;
+		case R.id.shelf_show_vedio:
+			changeStatu(showVedio, showBook);
+			mBookList_LV.setAdapter(vedioAdapter);
+			break;
+		default:
+			break;
+		}
+	}
+	public void changeStatu(TextView choosed, TextView unchoosed){
+		choosed.setTextColor(getResources().getColor(R.color.main_color));
+			unchoosed.setTextColor(getResources().getColor(R.color.textColor_2));
+
+			TranslateAnimation animation = new TranslateAnimation(
+					unchoosed.getLeft(), choosed.getLeft(), 0f, 0f);
+			animation.setDuration(100);
+			animation.setFillAfter(true);
+			indicator.startAnimation(animation);
+	}
+	
+	
+	
+}

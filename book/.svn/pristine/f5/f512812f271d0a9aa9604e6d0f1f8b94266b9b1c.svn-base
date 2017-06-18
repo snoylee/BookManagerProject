@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/main_bg"
+    android:orientation="vertical" >
+
+    <com.dbs.book.ui.view.titlebar.TitleBar
+        style="@style/titlebarstyle"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        app:action="切换"
+        app:title="学生登陆" />
+
+    <View
+        style="@style/divide_line"
+        android:layout_marginTop="@dimen/height_3_80" />
+
+    <LinearLayout
+        android:id="@+id/login_username_ll"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white_color"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="@dimen/width_2_80" >
+
+        <ImageView
+            android:layout_width="@dimen/height_4_80"
+            android:layout_height="@dimen/height_4_80"
+            android:src="@drawable/login_ico_01" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/width_2_80"
+            android:paddingRight="@dimen/width_2_80"
+            android:text="账号"
+            android:textColor="@color/textColor_1"
+            android:textSize="@dimen/text_size_18" />
+
+        <EditText
+            android:id="@+id/login_username_et"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:gravity="center_horizontal"
+            android:paddingRight="@dimen/width_15_80" />
+    </LinearLayout>
+
+    <View style="@style/divide_line" />
+
+    <LinearLayout
+        android:id="@+id/login_password_ll"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white_color"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="@dimen/width_2_80" >
+
+        <ImageView
+            android:layout_width="@dimen/height_4_80"
+            android:layout_height="@dimen/height_4_80"
+            android:src="@drawable/login_ico_02" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/width_2_80"
+            android:paddingRight="@dimen/width_2_80"
+            android:text="密码"
+            android:textColor="@color/textColor_1"
+            android:textSize="@dimen/text_size_18" />
+
+        <EditText
+            android:id="@+id/login_password_et"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:gravity="center_horizontal"
+            android:inputType="textPassword"
+            android:paddingRight="@dimen/width_15_80" />
+    </LinearLayout>
+
+    <View style="@style/divide_line" />
+
+    <LinearLayout
+        android:id="@+id/login_student_ll"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <View
+            style="@style/divide_line"
+            android:layout_marginTop="@dimen/height_2_80" />
+
+        <LinearLayout
+            android:id="@+id/login_grad_ll"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white_color"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="@dimen/width_2_80" >
+
+            <ImageView
+                android:layout_width="@dimen/height_4_80"
+                android:layout_height="@dimen/height_4_80"
+                android:src="@drawable/login_ico_03" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/width_2_80"
+                android:paddingRight="@dimen/width_2_80"
+                android:text="年级"
+                android:textColor="@color/textColor_1"
+                android:textSize="@dimen/text_size_18" />
+
+            <TextView
+                android:id="@+id/login_grad_tv"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:gravity="center_horizontal"
+                android:paddingRight="@dimen/width_15_80" />
+        </LinearLayout>
+
+        <View style="@style/divide_line" />
+
+        <LinearLayout
+            android:id="@+id/login_class_ll"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white_color"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="@dimen/width_2_80" >
+
+            <ImageView
+                android:layout_width="@dimen/height_4_80"
+                android:layout_height="@dimen/height_4_80"
+                android:src="@drawable/login_ico_03" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/width_2_80"
+                android:paddingRight="@dimen/width_2_80"
+                android:text="班级"
+                android:textColor="@color/textColor_1"
+                android:textSize="@dimen/text_size_18" />
+
+            <TextView
+                android:id="@+id/login_class_tv"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:gravity="center_horizontal"
+                android:paddingRight="@dimen/width_15_80" />
+        </LinearLayout>
+
+        <View style="@style/divide_line" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/login_submit_btn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/height_4_80"
+        android:layout_marginLeft="@dimen/width_2_80"
+        android:layout_marginRight="@dimen/width_2_80"
+        android:layout_marginTop="@dimen/height_2_80"
+        android:background="@drawable/shap_button_bg"
+        android:paddingBottom="@dimen/width_2_80"
+        android:paddingTop="@dimen/width_2_80"
+        android:text="立即登陆"
+        android:textColor="@color/white_color"
+        android:textSize="@dimen/text_size_18" />
+
+</LinearLayout>

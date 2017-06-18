@@ -1,0 +1,34 @@
+package com.dbs.book.utils;
+
+import com.dbs.book.R;
+
+import android.app.Dialog;
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
+
+public class DialogFactory {
+
+    public static Dialog showListDialog(Context mContext, String titleName, ListAdapter listAdapter, AdapterView.OnItemClickListener onItemClickListener){
+        final Dialog dialog = new Dialog(mContext);
+        dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        dialog.getWindow().setBackgroundDrawableResource(R.drawable.tran_bg);
+        dialog.show();
+
+        View common = LayoutInflater.from(mContext).inflate(R.layout.dialog_list_common, null);
+        TextView titleNameText = (TextView)common.findViewById(R.id.dialog_title);
+        titleNameText.setText(titleName);
+        ListView listview = (ListView)common.findViewById(R.id.ListView);
+        listview.setAdapter(listAdapter);
+        listview.setOnItemClickListener(onItemClickListener);
+
+        dialog.setContentView(common);
+        return dialog;
+    }
+
+}

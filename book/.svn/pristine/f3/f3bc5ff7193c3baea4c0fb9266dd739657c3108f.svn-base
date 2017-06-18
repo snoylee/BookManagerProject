@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/toast_tv"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/shape_image_yuanjiao_toast"
+    android:textSize="@dimen/text_size_14"
+    android:textColor="#FFFFFF"
+    android:paddingTop="@dimen/height_1_80"
+    android:paddingBottom="@dimen/height_1_80"
+    android:paddingLeft="@dimen/width_2_80"
+    android:paddingRight="@dimen/width_2_80" />
+    
+

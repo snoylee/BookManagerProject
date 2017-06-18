@@ -1,0 +1,99 @@
+package com.dbs.book.ui.fragment;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
+import android.view.animation.TranslateAnimation;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import com.dbs.book.R;
+import com.dbs.book.ui.activity.ReadActivity;
+import com.dbs.book.ui.adapter.BookListAdapter;
+import com.dbs.book.ui.adapter.VedioListAdapter;
+import com.dbs.book.utils.PhoneUtil;
+
+public class ShelfFragment extends Fragment implements View.OnClickListener{
+
+	private ListView mBookList_LV;
+	private ImageView indicator;
+	private TextView showBook;
+	private TextView showVedio;
+	private BookListAdapter bookAdapter;
+	private VedioListAdapter vedioAdapter;
+	
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		View root = inflater.inflate(R.layout.fragment_shelf, null);
+		findView(root);
+		setListener();
+		initView();
+		return root;
+	}
+
+	private void setListener() {
+		showBook.setOnClickListener(this);
+		showVedio.setOnClickListener(this);
+		
+		mBookList_LV.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				startActivity(new Intent(getActivity(), ReadActivity.class));
+			}
+		});
+	}
+
+	private void findView(View root) {
+		mBookList_LV = (ListView) root.findViewById(R.id.shelf_listview);
+		indicator = (ImageView) root.findViewById(R.id.indicator);
+		showBook = (TextView) root.findViewById(R.id.shelf_show_book);
+		showVedio = (TextView) root.findViewById(R.id.shelf_show_vedio);
+	}
+
+	private void initView() {
+		bookAdapter = new BookListAdapter(getActivity());
+		vedioAdapter = new VedioListAdapter(getActivity());
+		mBookList_LV.setAdapter(bookAdapter);
+		
+		LayoutParams params = indicator.getLayoutParams();
+		params.width = PhoneUtil.getDisplayWidth(getActivity()) / 2;
+		indicator.setLayoutParams(params);
+	}
+
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.shelf_show_book:
+			changeStatu(showBook, showVedio);
+			mBookList_LV.setAdapter(bookAdapter);
+			break;
+		case R.id.shelf_show_vedio:
+			changeStatu(showVedio, showBook);
+			mBookList_LV.setAdapter(vedioAdapter);
+			break;
+		default:
+			break;
+		}
+	}
+	
+	public void changeStatu(TextView choosed, TextView unchoosed){
+		choosed.setTextColor(getResources().getColor(R.color.main_color));
+			unchoosed.setTextColor(getResources().getColor(R.color.textColor_2));
+
+			TranslateAnimation animation = new TranslateAnimation(
+					unchoosed.getLeft(), choosed.getLeft(), 0f, 0f);
+			animation.setDuration(100);
+			animation.setFillAfter(true);
+			indicator.startAnimation(animation);
+	}
+}

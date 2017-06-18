@@ -1,0 +1,207 @@
+package com.dbs.book.net;
+
+import org.apache.http.Header;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+
+/**
+ * @ClassName  ：  ApiClient 
+ * @Description: 网络访问接口
+ * @author     ：  jiaxue 
+ * @date       ：  2015-3-15 下午4:47:39 
+
+ */
+
+public class ApiClient {
+	
+	
+	public static final int DATA_OK = 0;
+	public static final int DATA_ERR = -1;
+	public static final int SER_ERR = -2;
+	
+	
+	private static final String RES_HAS_ERR = "HasError";
+	private static final String RES_ERR = "Error";
+	private static final String RES_DATA = "Data";
+	private static final String RES_ERR_400 = "error_description";
+	
+	public static final String SER_TITLE ="亲，服务器不给力！";
+	public static final String DATA_TITLE ="亲，数据出错！";
+	
+	
+
+	/**
+	 * 学生登录
+	 * @param url
+	 * @param params ：account, password , grade, clazz
+	 * @param handler
+	 */
+	public static void studentLogin(RequestParams params, final Handler handler) {
+		
+		JsonHandler jsonHandler = new JsonHandler(handler);
+		RestClient.post(UrlDic.STUDENT_LOGIN_URL, params, jsonHandler);
+	}
+	
+	/**
+	 * 老师登录
+	 * @param url
+	 * @param params：account, password 
+	 * @param handler
+	 */
+	public static void teacherLogin(RequestParams params, final Handler handler) {
+		
+		JsonHandler jsonHandler = new JsonHandler(handler);
+		RestClient.post(UrlDic.TEACHER_LOGIN_URL, params, jsonHandler);
+	}
+	
+	/**
+	 * 获取分类列表
+	 * @param handler
+	 */
+	public static void getSortList(final Handler handler){
+		JsonHandler jsonHandler = new JsonHandler(handler);
+		RestClient.get(UrlDic.GET_SORT_LIST_URL, jsonHandler);
+	}
+	
+	/**
+	 * 按分类Id获取书籍列表
+	 * @param params: page, typeId;
+	 * @param handler
+	 */
+	public static void getBookListBySortId(RequestParams params, final Handler handler){
+		JsonHandler jsonHandler = new JsonHandler(handler);
+		RestClient.get(UrlDic.GET_BOOKLIST_BYSORTID, params, jsonHandler);
+	}
+	
+	/**
+	 * 按分类Id获取书籍列表
+	 * @param params: limit, bookId; 其中limit为返回的目录条数，-1表示全部
+	 * @param handler
+	 */
+	public static void getContentsByBookId(RequestParams params, final Handler handler){
+		JsonHandler jsonHandler = new JsonHandler(handler);
+		RestClient.get(UrlDic.GET_CONTENTS_BYBOOKID, params, jsonHandler);
+	}
+	
+	/**
+	 * 书籍模糊搜索
+	 * @param params：keywords
+	 * @param handler
+	 */
+	public static void bookSearch(RequestParams params, final Handler handler){
+		JsonHandler jsonHandler = new JsonHandler(handler);
+		RestClient.get(UrlDic.BOOK_SEARCH_URL, params, jsonHandler);
+	}
+	
+	
+	public static class JsonHandler extends JsonHttpResponseHandler {
+		private Handler mhandler;   // 传入的handler
+		private boolean mStandard;  // 判断返回值是否是标准格式
+
+		public JsonHandler(Handler handler,boolean standard) {
+			mhandler = handler;
+			mStandard = standard;
+		}
+		
+		public JsonHandler(Handler handler) {
+			mhandler = handler;
+			mStandard = false;
+		}
+		
+		@Override
+		public void onSuccess(int statusCode, Header[] headers,
+				JSONArray response) {			
+			sendMsg(mhandler, DATA_OK,  response);
+		}
+
+
+		@Override
+		public void onSuccess(int statusCode, Header[] headers,
+				JSONObject response) {
+			Log.e("ApiClient","onSuccess"+response.toString());
+			
+			if (mStandard) {
+
+				try {
+
+					boolean hasErr = response.getBoolean(RES_HAS_ERR);
+					if (hasErr) {
+						sendMsg(mhandler, DATA_ERR, response.get(RES_ERR));
+						return;
+					}
+
+					sendMsg(mhandler, DATA_OK, response.get(RES_DATA));
+
+				} catch (JSONException e) {
+					e.printStackTrace();
+					sendMsg(mhandler, DATA_ERR, DATA_TITLE);
+				}
+
+			} else {
+				Log.e("=========", response.toString());
+				sendMsg(mhandler, DATA_OK,  response);
+			}
+			
+
+		}
+
+		@Override
+		public void onStart() {
+			Log.e("ApiClient","onStart");
+		}
+
+		@Override
+		public void onFinish() {
+		}
+
+		@Override
+		public void onFailure(int statusCode, Header[] headers,
+				Throwable throwable, JSONObject errorResponse) {
+			if(statusCode == 400) {
+				Log.e("ApiClient","onFailure"+errorResponse.toString());
+				try {
+					String err = errorResponse.getString(RES_ERR_400);
+					
+					sendMsg(mhandler, SER_ERR,err);
+					
+				} catch (JSONException e) {
+					e.printStackTrace();
+					sendMsg(mhandler, SER_ERR,SER_TITLE);
+				}
+				return;
+			}
+			Log.e("ApiClient","onFailure");
+			sendMsg(mhandler, SER_ERR,SER_TITLE);
+		}
+		
+		@Override
+		public void onFailure(int statusCode, Header[] headers,
+				String responseString, Throwable throwable) {
+			if(statusCode == 400) {
+				sendMsg(mhandler, SER_ERR, SER_TITLE);
+				return;
+			}
+			Log.e("ApiClient","onFailure");
+			sendMsg(mhandler, SER_ERR,SER_TITLE);
+		}
+	}
+
+	
+	
+	private static void sendMsg(Handler handler, int status,Object obj) {
+		Message msg = Message.obtain();
+		msg.obj = obj;
+		msg.what = status;
+		handler.sendMessage(msg);
+	}
+
+}

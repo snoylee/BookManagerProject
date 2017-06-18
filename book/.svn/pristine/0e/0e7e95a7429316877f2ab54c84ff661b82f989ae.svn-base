@@ -1,0 +1,118 @@
+package com.dbs.book.utils;
+
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.graphics.Color;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import com.dbs.book.R;
+
+public class DialogFactory {
+
+    public static Dialog showListDialog(Context mContext, String titleName, ListAdapter listAdapter, AdapterView.OnItemClickListener onItemClickListener){
+        final Dialog dialog = new Dialog(mContext);
+        dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        dialog.getWindow().setBackgroundDrawableResource(R.drawable.tran_bg);
+        dialog.show();
+
+        View common = LayoutInflater.from(mContext).inflate(R.layout.dialog_list_common, null);
+        TextView titleNameText = (TextView)common.findViewById(R.id.dialog_title);
+        titleNameText.setText(titleName);
+        ListView listview = (ListView)common.findViewById(R.id.ListView);
+        listview.setAdapter(listAdapter);
+        listview.setOnItemClickListener(onItemClickListener);
+
+        dialog.setContentView(common);
+        return dialog;
+    }
+    
+    public static Dialog showSimpleWarnDialog(Context mContext,String titleName, String contentText, String confirmText, String canceltext,
+            final View.OnClickListener confirmOnClicklistener,
+            final View.OnClickListener cancelOnClicklistener,
+            final DialogInterface.OnDismissListener onDismissListener){
+    	
+    	final Dialog dialog = new Dialog(mContext);
+        dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        dialog.getWindow().setBackgroundDrawableResource(R.drawable.tran_bg);
+        dialog.show();
+        
+        View common = LayoutInflater.from(mContext).inflate(R.layout.dialog_common, null);
+        Button confirmbutton = (Button) common.findViewById(R.id.button1);
+        Button cancelbutton = (Button) common.findViewById(R.id.button2);
+        TextView titleNameText = (TextView)common.findViewById(R.id.dialog_title);
+        TextView contentView = (TextView) common.findViewById(R.id.content_text);
+
+        if(!StringUtil.isEmpty(titleName)) titleNameText.setText(titleName);
+        
+        if(!StringUtil.isEmpty(confirmText)) {
+            confirmbutton.setText(confirmText);
+        }else{
+            confirmbutton.setVisibility(View.GONE);
+        }
+
+        if(!StringUtil.isEmpty(canceltext)) {
+            cancelbutton.setText(canceltext);
+        }else{
+            cancelbutton.setVisibility(View.GONE);
+        }
+
+        confirmbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(confirmOnClicklistener != null){
+                    confirmOnClicklistener.onClick(v);
+                }
+                dialog.dismiss();
+            }
+        });
+
+        cancelbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(cancelOnClicklistener != null){
+                    cancelOnClicklistener.onClick(v);
+                }
+                dialog.dismiss();
+            }
+        });
+
+        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                if(onDismissListener != null){
+                    onDismissListener.onDismiss(dialog);
+                }
+            }
+        });
+        
+        if(!StringUtil.isEmpty(contentText)){
+        	contentView.setText(contentText);
+        	contentView.setTextColor(mContext.getResources().getColor(R.color.textColor_2));
+        	contentView.setTextSize(18f);
+        	contentView.setBackgroundResource(mContext.getResources().getColor(R.color.transparent));
+        }
+        
+        Window dialogWindow = dialog.getWindow();
+        WindowManager.LayoutParams lp = dialogWindow.getAttributes();
+        lp.width = PhoneUtil.getDisplayWidth(mContext)*3 /4;
+        dialogWindow.setAttributes(lp);
+
+        dialog.setContentView(common);
+        
+        
+        return dialog;
+        
+    }
+
+}
